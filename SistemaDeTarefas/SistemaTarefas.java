@@ -28,6 +28,7 @@ public class SistemaTarefas {
                 case 8 -> listarTarefasComFiltros();
                 case 9 -> excluirTarefa();
                 case 10 -> excluirColaborador();
+                case 11 -> modificarTarefa();
                 case 0 -> System.out.println("Saindo...");
                 default -> System.out.println("Opção inválida.");
             }
@@ -46,6 +47,7 @@ public class SistemaTarefas {
         System.out.println("8 - Listar Tarefas com Filtros");
         System.out.println("9 - Excluir Tarefa");
         System.out.println("10 - Excluir Colaborador");
+        System.out.println("11 - Modificar Tarefa"); // Nova opção
         System.out.println("0 - Sair");
         System.out.print("Escolha uma opção: ");
     }
@@ -65,7 +67,7 @@ public class SistemaTarefas {
     }
 
     private static void cadastrarTarefa() {
-        System.out.print("Descrição da tarefa: ");
+        System.out.print("Nome da tarefa: ");
         String descricao = sc.nextLine();
         listarCategorias();
         System.out.print("ID da categoria: ");
@@ -140,6 +142,68 @@ public class SistemaTarefas {
     private static void listarTarefas() {
         System.out.println("\n--- Tarefas ---");
         tarefas.forEach(System.out::println);
+    }
+
+    private static void modificarTarefa() {
+        listarTarefas();
+        System.out.print("ID da tarefa para modificar: ");
+        int idTar = sc.nextInt();
+        sc.nextLine();
+
+        Tarefa tarefa = buscarTarefaPorId(idTar);
+        if (tarefa == null) {
+            System.out.println("Tarefa não encontrada.");
+            return;
+        }
+
+        System.out.println("\n--- Modificar Tarefa ---");
+        System.out.println("1 - Modificar Descrição");
+        System.out.println("2 - Modificar Categoria");
+        System.out.println("3 - Modificar Colaborador Associado");
+        System.out.print("Escolha uma opção: ");
+        int opcaoModificacao = sc.nextInt();
+        sc.nextLine();
+
+        switch (opcaoModificacao) {
+            case 1 -> {
+                System.out.print("Nova descrição da tarefa: ");
+                String novaDescricao = sc.nextLine();
+                tarefa.setDescricao(novaDescricao);
+                System.out.println("Descrição da tarefa atualizada com sucesso!");
+            }
+            case 2 -> {
+                listarCategorias();
+                System.out.print("Novo ID da categoria: ");
+                int novoIdCat = sc.nextInt();
+                sc.nextLine();
+                Categoria novaCategoria = buscarCategoriaPorId(novoIdCat);
+                if (novaCategoria != null) {
+                    tarefa.setCategoria(novaCategoria);
+                    System.out.println("Categoria da tarefa atualizada com sucesso!");
+                } else {
+                    System.out.println("Categoria não encontrada.");
+                }
+            }
+            case 3 -> {
+                listarColaboradores();
+                System.out.print("Novo ID do colaborador (0 para remover): ");
+                int novoIdColab = sc.nextInt();
+                sc.nextLine();
+                if (novoIdColab == 0) {
+                    tarefa.setColaborador(null);
+                    System.out.println("Colaborador removido da tarefa.");
+                } else {
+                    Colaborador novoColaborador = buscarColaboradorPorId(novoIdColab);
+                    if (novoColaborador != null) {
+                        tarefa.setColaborador(novoColaborador);
+                        System.out.println("Colaborador da tarefa atualizado com sucesso!");
+                    } else {
+                        System.out.println("Colaborador não encontrado.");
+                    }
+                }
+            }
+            default -> System.out.println("Opção de modificação inválida.");
+        }
     }
 
     private static void listarTarefasComFiltros() {
